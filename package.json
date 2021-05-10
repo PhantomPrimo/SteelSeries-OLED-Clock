@@ -1,0 +1,37 @@
+{
+  "name": "SteelSeries-OLED-Clock",
+  "version": "1.0.0",
+  "description": "A OLED Clock display for Steelseries Apex Keyboards",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.electron.gamesenseclock",
+    "win": {
+      "target": ["portable","NSIS"],
+      "icon": "clock.png"
+    },
+    "portable": {
+      "artifactName": "SteelSeries-OLED-Clock.exe"
+    },
+    "directories": {
+      "output": "build/dist"
+    },
+    "extraResources":["array.json","clock.png"]
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "electron-config": "^2.0.0",
+    "gamesense-client": "^2.0.2"
+  },
+  "devDependencies": {
+    "electron": "^12.0.7",
+    "electron-builder": "^22.11.1"
+  }
+}

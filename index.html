@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLED Screen Clock Display</title>
+</head>
+<style>
+    body{
+        background-color: #333;
+        padding: 0;
+        margin: 0;        
+        height: 100vh;
+        width: 100vw;
+        display: grid;
+        overflow: hidden;
+        justify-items: center;
+        align-items: center;
+
+    }
+
+    body div{
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        grid-template-rows:20% 80%;
+    }
+
+    body div button{
+        margin: 40px 10px;
+        height: 40px;
+        color:black;
+    }
+
+    #nav{
+        position: absolute;
+        top:0;
+        left:0;
+        text-align: left;
+        background-color: White;
+        color: darkgray;
+        height: 35px;
+        width: 100vw;
+        z-index: -1;
+        vertical-align: middle;
+        line-height: 30px;  
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+        font-size: 15px;
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+    }
+
+    body button{        
+        -webkit-user-select: initial;
+        -webkit-app-region: none;
+    }
+
+    #Close{
+        position: absolute;
+        top:2px;
+        right:4px;
+        width: 30px;
+        height: 30px;
+    }
+
+    #Reset{
+        position: absolute;
+        top:2px;
+        right:44px;
+        width: 30px;
+        height: 30px;
+    }
+
+    #Hide{
+        position: absolute;
+        top:2px;
+        right:84px;
+        width: 30px;
+        height: 30px;
+    }
+    #ShowConsole{
+        position: absolute;
+        top:2px;
+        right:124px;
+        width: 30px;
+        height: 30px;
+    }
+
+    canvas{
+        border: solid 2px dodgerblue;
+    }
+
+    #Constant{
+        grid-column:1 /span 2;
+        color:black;
+    }
+
+    #Heart{
+        grid-column:3 /span 2;
+        color:black;
+    }
+
+</style>
+<body>
+    <div id="nav"> OLED Screen Clock Display</div>
+    <button id="Close" title="Close App">✕</button>
+    <button id="Reset" title="Restart App">⟳</button>
+    <button id="Hide" title="Hide to Tray">🗕</button>
+    <button id="ShowConsole" title="Open Console">$></button>
+    <div>
+        <button id="Constant">Stop Clock</button>
+        <button id="Heart">Disable Keep Alive</button>
+        <button id="AddGame" style="background-color:#77dd77;">Add Game</button> 
+        <button id="RemoveGame" style="background-color:#ff6961;">Remove Game</button>
+        <button id="AddEvent" style="background-color:#77dd77;">Add Event</button>
+        <button id="ResetEvent" style="background-color:#ff6961;">Reset Event</button>  
+    </div>
+    <!-- <canvas id="myCanvas" width="128" height="40"></canvas> -->
+</body>
+<script>
+    const ipcRenderer = require('electron').ipcRenderer; 
+    document.getElementById("Reset").addEventListener('click',()=>{
+        ipcRenderer.send('restart')
+    })
+    document.getElementById("Hide").addEventListener('click',()=>{
+        ipcRenderer.send('minimize')
+    })
+    document.getElementById("Close").addEventListener('click',()=>{
+        ipcRenderer.send('close')
+    })
+    document.getElementById("ShowConsole").addEventListener('click',()=>{
+        ipcRenderer.send('console')
+    })
+    document.getElementById("ResetEvent").addEventListener('click',()=>{
+        ipcRenderer.send('remove')
+    })
+    document.getElementById("AddEvent").addEventListener('click',()=>{
+        ipcRenderer.send('add')
+    })
+    document.getElementById("Constant").addEventListener('click',(event)=>{
+        ipcRenderer.send('constant')
+        if (event.target.innerHTML=="Start Clock"){
+            event.target.innerHTML="Stop Clock"
+        }else{
+            event.target.innerHTML="Start Clock"
+        }        
+    })
+    document.getElementById("Heart").addEventListener('click',()=>{
+        ipcRenderer.send('heart')
+        if (event.target.innerHTML=="Enable Keep Alive"){
+            event.target.innerHTML="Disable Keep Alive"
+        }else{
+            event.target.innerHTML="Enable Keep Alive"
+        }  
+    })
+    document.getElementById("RemoveGame").addEventListener('click',()=>{
+        ipcRenderer.send('removeGame')
+    })
+    document.getElementById("AddGame").addEventListener('click',()=>{
+        ipcRenderer.send('addGame')
+    })
+
+    //Draw display onto html
+    function drawImage(arrIMG) {
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+        var id = context.createImageData(1,1); // only do this once per page
+        var d  = id.data;  
+        fmtArr=[]
+        for (let i = 0; i < arrIMG.length; i++) {
+            const pixel = arrIMG[i];
+            for (z=0;z<8;z++){
+                fmtArr.push(pixel)
+            }
+        }
+        
+        x=1
+        y=1
+        for (let i = 0; i < fmtArr.length; i++) {
+            const pixel = fmtArr[i];            
+            d[0]   = pixel;
+            d[1]   = pixel;
+            d[2]   = pixel;
+            d[3]   = 255;
+            console.log(`${x},${y}`);
+            context.putImageData(id, x, y);
+            if (x==canvas.clientWidth){
+                y+=1
+                x=1
+            }else{
+                x+=1
+            }
+        }
+        console.log(fmtArr.length);
+        console.log(arrIMG.length);
+               
+      }
+    </script>
+</script>
+</html>

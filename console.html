@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console</title>
+</head>
+<style>
+    
+    *::-webkit-scrollbar{
+        width: 0.6rem;
+    }
+
+    *::-webkit-scrollbar-track{
+        background-color: #212122;
+    }
+
+    *::-webkit-scrollbar-thumb{
+        background-color: #707071;
+        /* border-radius: 20px; */
+    }
+    body{
+        background-color: #1E1E1E;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: min-content auto;
+        height: 100vh;
+        width: 100vw;
+    }
+    #nav{
+        position: sticky;
+        top:0px;
+        left:0px;
+        width: 100vw;
+        height: 25px;
+        background-color: #323233;
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+        color:#C4C4C4;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+        font-size: 15px;
+    }
+    #nav p{
+        position: absolute;
+        top:5px;
+        left:10px;
+        padding: 0;
+        margin: 0;
+    }
+    #console{
+        height: 100%;
+        overflow-y: scroll;
+    }
+    pre{
+        color:lightgray;
+        margin:0px 10px;
+        word-wrap: normal;
+        overflow-wrap: normal;
+        
+    }
+    #btns{
+        position: absolute;
+        top:4px;
+        right:5px;
+        height:inherit;
+    }
+    #btns img{
+        height: 75%;
+        padding: 0;
+        margin: 0;
+        transition: 0.2s;
+        -webkit-user-select:initial;
+        -webkit-app-region: none;
+    }
+    img:hover{
+        filter:opacity(70%)
+    }
+
+</style>
+<body>
+    <div id="nav">
+        <p>Console Window</p>
+        <div id="btns">
+            <img id="clear" src="reset.png" alt="">
+            <img id="exit" src="exit.png" alt="">
+        </div>               
+    </div>
+    <div id="console">
+        <pre><code id="out">Loading Console</code></pre>
+    </div>
+</body>
+<script>
+    const ipcRenderer = require('electron').ipcRenderer; 
+    let code=document.getElementById('out')
+    let dsp_console=document.getElementById('console')
+    let last=[]
+    setInterval(()=>{        
+        ipcRenderer.invoke('console').then((output)=>{
+            if (output.length==last.length) return;            
+            last=output
+            code.innerHTML=""
+            code.innerHTML=output.join('\n')
+            dsp_console.scrollTop=dsp_console.scrollHeight
+        })
+    },50)
+    document.getElementById('clear').addEventListener('click',()=>{
+        ipcRenderer.send('restart')
+    })
+    document.getElementById('exit').addEventListener('click',()=>{
+        ipcRenderer.send('consoleClose')
+    })
+</script>
+</html>
