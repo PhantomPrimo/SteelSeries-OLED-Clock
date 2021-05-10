@@ -1,7 +1,9 @@
 <!-- SteelSeries-OLED-Clock  -->
 # SteelSeries - OLED Screen Clock
-This is a Simple OLED Clock for Steelseries Apex Keyboards (Screen Size 128x40), was a bit disappointed this wasn't included as option in the SteelSeries Engine App so ended up making one myself.
+This is a Simple OLED Clock for Steelseries Apex Keyboards (Screen Size 128x40), was a bit disappointed this wasn't included as option in the SteelSeries Engine App so ended up making one myself.  
 
+Example Display:  
+![Theme](example.png)
 # Getting Started
 1. Download the latest release build portable executable (`SteelSeries-OLED-Clock.exe`)
 2. Place the exe in your Startup folder under `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp` so it can auto start on Windows login
